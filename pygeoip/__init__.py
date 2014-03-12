@@ -60,10 +60,11 @@ class _GeoIPMetaclass(type):
         Singleton method to gets an instance without reparsing
         the database, the filename is being used as cache key.
         """
+
         if len(args) > 0:
-            filename = args[0]
+            filename = resource_filename(__name__, args[0])
         elif 'filename' in kwargs:
-            filename = kwargs['filename']
+            filename = resource_filename(__name__, kwargs['filename'])
         else:
             return None
 

@@ -60,11 +60,10 @@ class _GeoIPMetaclass(type):
         Singleton method to gets an instance without reparsing
         the database, the filename is being used as cache key.
         """
-
         if len(args) > 0:
-            filename = resource_filename(__name__, args[0])
+            filename = args[0]
         elif 'filename' in kwargs:
-            filename = resource_filename(__name__, kwargs['filename'])
+            filename = kwargs['filename']
         else:
             return None
 
@@ -99,27 +98,25 @@ class GeoIP(object):
         self._flags = flags
         self._netmask = None
 
-        filepath = resource_filename(__name__, filename)
-
         if self._flags & const.MMAP_CACHE and mmap is None:  # pragma: no cover
             import warnings
             warnings.warn("MMAP_CACHE cannot be used without a mmap module")
             self._flags &= ~const.MMAP_CACHE
 
         if self._flags & const.MMAP_CACHE:
-            f = codecs.open(filepath, 'rb', ENCODING)
+            f = codecs.open(filename, 'rb', ENCODING)
             access = mmap.ACCESS_READ
             self._fp = mmap.mmap(f.fileno(), 0, access=access)
             self._type = 'MMAP_CACHE'
             f.close()
         elif self._flags & const.MEMORY_CACHE:
-            f = codecs.open(filepath, 'rb', ENCODING)
+            f = codecs.open(filename, 'rb', ENCODING)
             self._memory = f.read()
             self._fp = util.str2fp(self._memory)
             self._type = 'MEMORY_CACHE'
             f.close()
         else:
-            self._fp = codecs.open(filepath, 'rb', ENCODING)
+            self._fp = codecs.open(filename, 'rb', ENCODING)
             self._type = 'STANDARD'
 
         try:

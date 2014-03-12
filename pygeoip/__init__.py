@@ -98,6 +98,8 @@ class GeoIP(object):
         self._flags = flags
         self._netmask = None
 
+        filename = resource_filename(__name__, filename)
+
         if self._flags & const.MMAP_CACHE and mmap is None:  # pragma: no cover
             import warnings
             warnings.warn("MMAP_CACHE cannot be used without a mmap module")

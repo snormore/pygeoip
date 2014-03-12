@@ -65,7 +65,7 @@ class _GeoIPMetaclass(type):
         elif 'filename' in kwargs:
             filename = kwargs['filename']
         else:
-            return None
+            filename = 'data/GeoIP.dat'
 
         if not kwargs.get('cache', True):
             return super(_GeoIPMetaclass, cls).__call__(*args, **kwargs)

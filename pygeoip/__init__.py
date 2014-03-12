@@ -31,7 +31,7 @@ except ImportError:  # pragma: no cover
 
 from pygeoip import util, const
 from pygeoip.const import PY2, PY3
-from pygeoip.timezone import time_zone_by_country_and_region
+from pygeoip.timezone import time_zone_by_country_and_region\
 
 range = xrange if PY2 else range
 
@@ -41,6 +41,7 @@ MEMORY_CACHE = const.MEMORY_CACHE
 
 ENCODING = const.ENCODING
 
+from pkg_resources import resource_filename
 
 class GeoIPError(Exception):
     """
@@ -82,7 +83,7 @@ class _GeoIPMetaclass(type):
 class GeoIP(object):
     __metaclass__ = _GeoIPMetaclass
 
-    def __init__(self, filename, flags=STANDARD, cache=True):
+    def __init__(self, filename='data/GeoIP.dat', flags=STANDARD, cache=True):
         """
         Create and return an GeoIP instance.
 
@@ -97,25 +98,27 @@ class GeoIP(object):
         self._flags = flags
         self._netmask = None
 
+        filepath = resource_filename(__name__, filename)
+
         if self._flags & const.MMAP_CACHE and mmap is None:  # pragma: no cover
             import warnings
             warnings.warn("MMAP_CACHE cannot be used without a mmap module")
             self._flags &= ~const.MMAP_CACHE
 
         if self._flags & const.MMAP_CACHE:
-            f = codecs.open(filename, 'rb', ENCODING)
+            f = codecs.open(filepath, 'rb', ENCODING)
             access = mmap.ACCESS_READ
             self._fp = mmap.mmap(f.fileno(), 0, access=access)
             self._type = 'MMAP_CACHE'
             f.close()
         elif self._flags & const.MEMORY_CACHE:
-            f = codecs.open(filename, 'rb', ENCODING)
+            f = codecs.open(filepath, 'rb', ENCODING)
             self._memory = f.read()
             self._fp = util.str2fp(self._memory)
             self._type = 'MEMORY_CACHE'
             f.close()
         else:
-            self._fp = codecs.open(filename, 'rb', ENCODING)
+            self._fp = codecs.open(filepath, 'rb', ENCODING)
             self._type = 'STANDARD'
 
         try:

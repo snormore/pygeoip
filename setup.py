@@ -40,5 +40,4 @@ setup(name='pygeoip',
                    'Programming Language :: Python :: 3.3'],
       packages=['pygeoip'],
       license='LGPLv3+',
-      keywords='geoip',
-      zip_safe=False)
+      keywords='geoip')
